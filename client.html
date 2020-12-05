@@ -1,0 +1,86 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <h1>Cloud-based Movie Database</h1>
+    <div>Find out all kinds of information about your favourite movies!</div>
+    <button v-on:click="create">Create</button> 
+    <button v-on:click="destroy">Destroy</button>
+    <br>
+    <br>
+    Title: <input v-model="title"> 
+    Year: <input v-model="year">
+    <button v-on:click="query">Query</button>
+    <br>
+    <br>
+    <div v-if = "displayDB">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Movie</th>
+                    <th>Year</th>
+                    <th>Director</th>
+                    <th>Rating</th>
+                    <th>Rank</th>
+                    <th>Release Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="row in movieList">
+                    <td v-for="item in row">
+                        {{item}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div v-if = "destroyDB">
+        <p>"Your table has been destroyed"</p>
+    </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            title:'',
+            year:'',
+            movieList : [],
+            displayDB: false,
+            destroyDB: false
+        },
+        methods: {
+            create: create,
+            destroy: destroy,
+            query: query
+        }
+    })
+
+    function create() {
+        //let prom = fetch('/create', {method:'POST'})
+        let prom = fetch('/create')
+        prom.then(response => response.json())
+            .then(response => {
+            })
+        this.displayDB = true
+        this.destroyDB = false
+    }
+
+    function query(year, title) {
+        //let prom = fetch('/query/'+title+'/'+year, {method:'POST'})
+        let prom = fetch('/query/'+title+'/'+year)
+        prom.then(response => response.json())
+            .then(response => {
+                this.responseList = response.queryList
+            })
+    }
+
+    function destroy(){
+        //let prom = fetch('/destroy', {method:'POST'})
+        let prom = fetch('/destroy')
+        prom.then(response => response.json())
+            .then(response => {
+            })
+            this.displayDB = false
+            this.destroyDB = true
+    }
+</script>
