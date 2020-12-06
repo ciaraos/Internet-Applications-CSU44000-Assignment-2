@@ -12,6 +12,7 @@
     <button v-on:click="query">Query</button>
     <br>
     <br>
+    <!--Create table to display movies-->
     <div v-if = "displayDB">
         <table border="1">
             <thead>
@@ -26,8 +27,8 @@
             </thead>
             <tbody>
                 <tr v-for="row in movieList">
-                    <td v-for="item in row">
-                        {{item}}
+                    <td v-for="variable in row">
+                        {{variable}}
                     </td>
                 </tr>
             </tbody>
@@ -38,10 +39,12 @@
     </div>
 </div>
 
+<!--Creating the Vue app (containing a reactive pool)-->
 <script>
     var app = new Vue({
         el: "#app",
         data: {
+            //reactive variables
             title:'',
             year:'',
             movieList : [],
@@ -56,8 +59,7 @@
     })
 
     function create() {
-        //let prom = fetch('/create', {method:'POST'})
-        let prom = fetch('/create')
+        let prom = fetch('/createDB')
         prom.then(response => response.json())
             .then(response => {
             })
@@ -66,8 +68,7 @@
     }
 
     function query(year, title) {
-        //let prom = fetch('/query/'+title+'/'+year, {method:'POST'})
-        let prom = fetch('/query/'+title+'/'+year)
+        let prom = fetch('/queryDB/'+title+'/'+year)
         prom.then(response => response.json())
             .then(response => {
                 this.responseList = response.queryList
@@ -75,8 +76,7 @@
     }
 
     function destroy(){
-        //let prom = fetch('/destroy', {method:'POST'})
-        let prom = fetch('/destroy')
+        let prom = fetch('/destroyDB')
         prom.then(response => response.json())
             .then(response => {
             })

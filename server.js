@@ -4,9 +4,8 @@ const app = express()
 const AWS = require("aws-sdk");
 const port = 3000
 
-let awsCredentials = new AWS.Credentials("AKIAJQM53MTONXKPJRKA","4aNHfHkaly3M4R0h5bHqjCOlNGdoL4mHURCK6WPG"); 
 //let awsCredentials = new AWS.Credentials("ASIA4CQ2BTXBFXJRBP3R","W/ij25z9OOeAH+Pwher4LOD04z3//SJnEB1FjNp+"); 
-
+let awsCredentials = new AWS.Credentials("AKIAJQM53MTONXKPJRKA","4aNHfHkaly3M4R0h5bHqjCOlNGdoL4mHURCK6WPG"); 
 AWS.config.update({
     region: "eu-west-1",
     credentials: awsCredentials
@@ -28,7 +27,7 @@ app.listen(port, function () {
 //Make a table in DynamoDB
 //Get data from S3 bucket
 //Upload data to table
-app.get('/create', (req, res) => {
+app.get('/createDB', (req, res) => {
     var params = {
         TableName: "Movies",
         KeySchema: [
@@ -58,7 +57,6 @@ app.get('/create', (req, res) => {
     var s3 = new AWS.S3();
     s3.getObject(s3params, function (err, data) {
         if (err) {
-            //console.log(err, err.stack);
             console.log("Err")
         } else {
             var allMovies = JSON.parse(data.Body.toString());
@@ -74,7 +72,6 @@ app.get('/create', (req, res) => {
                         "release": movie.info.release_date
                     }
                 };
-                
 
                 docClient.put(params, function (err, data) {
                     if (err) {
@@ -91,19 +88,16 @@ app.get('/create', (req, res) => {
 
 //Find the movie match the user input (title, year)
 //Display this on webpage
-app.get('/query/:title/:year', (req, res) => {
+app.get('/queryDB/:title/:year', (req, res) => {
     var movieList = {
         queryList :[]
     }
     var year = parseInt(req.params.year)
-    var title = req.params.title
-    //var queryTitle = req.params.title.replace(/%20/g, " ");
-    //var year = parseInt(req.params.year)
+    var queryTitle = req.params.title.replace(/%20/g, " ");
     var queryParams = {
         TableName : "Movies",
         ProjectionExpression:"#yr, title, director, rating, #rank, #release",
-        //KeyConditionExpression: "#yr = :yyyy and begins_with (title, :endTitle)",
-        KeyConditionExpression: "#yr = :yyyy and begins_with (title, :letter1)",
+        KeyConditionExpression: "#yr = :yyyy and begins_with (title, :endTitle)",
         ExpressionAttributeNames:{
             "#yr": "year",
             "#rank":"rank",
@@ -111,9 +105,7 @@ app.get('/query/:title/:year', (req, res) => {
         },
         ExpressionAttributeValues: {
             ":yyyy": year,
-            //":yyyy": parseInt(req.params.year),
-            ":letter1": title
-            //":endTitle": queryTitle
+            ":endTitle": queryTitle
         }
     };
 
@@ -139,7 +131,7 @@ app.get('/query/:title/:year', (req, res) => {
 });
 
 //Delete table 
-app.get('/destroy', (req, res) => {
+app.get('/destroyDB', (req, res) => {
     console.log("Destroying");
     var params = {
         TableName : "Movies",
