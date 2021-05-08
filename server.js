@@ -4,8 +4,7 @@ const app = express()
 const AWS = require("aws-sdk");
 const port = 3000
 
-//let awsCredentials = new AWS.Credentials("ASIA4CQ2BTXBFXJRBP3R","W/ij25z9OOeAH+Pwher4LOD04z3//SJnEB1FjNp+"); 
-let awsCredentials = new AWS.Credentials("AKIAJQM53MTONXKPJRKA","4aNHfHkaly3M4R0h5bHqjCOlNGdoL4mHURCK6WPG"); 
+let awsCredentials = new AWS.Credentials(""); 
 AWS.config.update({
     region: "eu-west-1",
     credentials: awsCredentials
